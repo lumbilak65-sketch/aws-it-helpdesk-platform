@@ -1,36 +1,43 @@
-# 🛠️ AWS IT Help Desk Platform
+# AWS IT Help Desk Platform
 
-> **Serverless IT operations platform built with AWS Lambda, DynamoDB, IAM, API Gateway concepts, CloudWatch, Python, and Terraform.**
+A beginner friendly help desk ticket demo. The **local demo** runs on your Windows computer and saves tickets in a small SQLite database. It does not need an AWS account and does not connect to AWS.
 
-## Why I built this
+## Run it on Windows
 
-IT support teams need more than a ticket form: they need reliable persistence, controlled access, observable services, and automation. This project models the backend of a lightweight help desk platform using AWS managed services.
+1. On GitHub, open this repository and choose **Code → Download ZIP**.
+2. In File Explorer, right-click the ZIP and choose **Extract All**.
+3. Open the extracted `aws-it-helpdesk-platform-main` folder.
+4. Click the address bar at the top of File Explorer, type `powershell`, and press **Enter**.
+5. In PowerShell, run these commands one at a time:
 
-## Architecture
+   ```powershell
+   py -3.14 -m venv .venv
+   .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+   .\.venv\Scripts\python.exe local_app.py
+   ```
 
-```text
-User / Support Tool
-        |
-        v
-   API Gateway
-        |
-        v
-     Lambda
-      /   \
-     v     v
-DynamoDB  CloudWatch Logs
+6. Leave PowerShell open. In Chrome, visit **http://127.0.0.1:5001**.
+7. To stop the demo, return to PowerShell and press **Ctrl+C**.
+
+Port **5001** keeps this demo separate from the IT Resilience Command Center, which uses port 5000.
+
+The demo starts with one sample VPN ticket. Create a ticket, open it from the list, and change its status. Your demo tickets are saved in `instance/helpdesk.sqlite3` inside the project folder. This is sample data on your computer.
+
+## Run the checks
+
+From the extracted project folder, open PowerShell and run:
+
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
-## Core capabilities
+The tests check that the page loads, a ticket can be created, its status can be changed, and an unknown ticket returns a not found page.
 
-- Create IT support tickets
-- Retrieve tickets by ID
-- Persist ticket metadata in DynamoDB
-- Apply an IAM role with scoped DynamoDB permissions
-- Emit operational logs to CloudWatch
-- Add a health-check Lambda for service verification
-- Provision foundational resources with Terraform
-- Validate behavior with Python tests
+## How this relates to AWS
+
+The project also includes an AWS Lambda ticket handler, a health check, and Terraform files. Those files are **not a complete AWS deployment** yet: the current Terraform does not create the Lambda functions or API Gateway, and the Lambda code has not been verified against a live AWS account. Do not run `terraform apply` expecting a working cloud service.
+
+The local demo is a separate, working prototype that helps you learn the ticket workflow without AWS credentials or cloud charges. Deploying the AWS version will require completing and testing the cloud infrastructure in an AWS account.
 
 ## Example ticket
 
@@ -43,32 +50,8 @@ DynamoDB  CloudWatch Logs
 }
 ```
 
-## Engineering decisions
+## Technologies
 
-**Serverless:** Lambda removes server management for a small event-driven workload.
-
-**DynamoDB:** A key-value/document model fits ticket lookup by `TicketId` and avoids unnecessary database administration.
-
-**IAM:** The Lambda role is restricted to the DynamoDB operations it needs rather than granting broad administrator access.
-
-**Observability:** CloudWatch logging provides a starting point for operational troubleshooting.
-
-## Skills demonstrated
-
-AWS Lambda · DynamoDB · IAM · CloudWatch · REST/API concepts · Terraform · Python · JSON · troubleshooting · serverless architecture
-
-## What I would improve for production
-
-- API Gateway resource/method definitions
-- Authentication and authorization
-- AWS WAF and throttling
-- Structured JSON logging
-- CloudWatch alarms and dashboards
-- Dead-letter handling
-- Encryption and key-management strategy
-- CI/CD deployment with GitHub Actions
-- Integration and load testing
-
-## Portfolio note
-
-This repository is intended as a demonstrable cloud engineering project. For a production claim, deploy it in an AWS account and add screenshots plus the deployment details to this README.
+- Python and Flask for the local demo
+- SQLite for local ticket storage
+- AWS Lambda, DynamoDB, IAM, and Terraform starter files for future cloud deployment
