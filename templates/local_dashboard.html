@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Help Desk | Local Demo</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='local.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('dashboard') }}"><span class="brand-mark">HD</span><span>IT HELP DESK<small>LOCAL DEMO</small></span></a>
+    <span class="local-pill"><i></i> Running on this computer</span>
+  </header>
+  <main class="page">
+    <section class="intro">
+      <div><p class="eyebrow">SUPPORT OPERATIONS</p><h1>Good day, support team.</h1><p class="subhead">A simple place to capture requests, follow progress, and keep people updated.</p></div>
+      <div class="demo-note"><strong>Demo mode</strong><span>Sample tickets are stored on this computer. No AWS account is connected.</span></div>
+    </section>
+    {% with messages = get_flashed_messages(with_categories=true) %}{% for category, message in messages %}<div class="notice {{ category }}">{{ message }}</div>{% endfor %}{% endwith %}
+    <section class="stats">
+      <article><span>All tickets</span><strong>{{ stats.total }}</strong></article>
+      <article><span>Open</span><strong>{{ stats.open }}</strong></article>
+      <article><span>In progress</span><strong>{{ stats.progress }}</strong></article>
+      <article><span>Resolved</span><strong>{{ stats.resolved }}</strong></article>
+    </section>
+    <section class="layout">
+      <section class="panel create-panel">
+        <p class="eyebrow">NEW REQUEST</p><h2>Create a ticket</h2><p class="muted">Add a request to the local demo inbox.</p>
+        <form method="post" class="ticket-form">
+          <label for="title">Issue title</label><input id="title" name="title" maxlength="120" placeholder="Example: Can't connect to VPN" required>
+          <label for="requester">Requester email</label><input id="requester" name="requester" type="email" placeholder="name@example.com" required>
+          <label for="priority">Priority</label><select id="priority" name="priority"><option>Low</option><option selected>Medium</option><option>High</option><option>Critical</option></select>
+          <label for="description">What is happening?</label><textarea id="description" name="description" rows="4" placeholder="Describe the issue and any steps already tried." required></textarea>
+          <button class="primary" type="submit">Create ticket <span>→</span></button>
+        </form>
+      </section>
+      <section class="panel ticket-panel">
+        <div class="section-heading"><div><p class="eyebrow">TICKET QUEUE</p><h2>Recent requests</h2></div><span class="count">{{ tickets|length }} total</span></div>
+        {% if tickets %}<div class="ticket-list">{% for ticket in tickets %}<a class="ticket-row" href="{{ url_for('ticket_detail', ticket_id=ticket.id) }}"><span class="ticket-icon">#{{ "%03d"|format(ticket.id) }}</span><span class="ticket-main"><strong>{{ ticket.title }}</strong><small>{{ ticket.requester }} · {{ ticket.created_at }}</small></span><span class="priority {{ ticket.priority|lower }}">{{ ticket.priority }}</span><span class="status {{ ticket.status|lower|replace(' ', '-') }}">{{ ticket.status }}</span><span class="arrow">→</span></a>{% endfor %}</div>{% else %}<div class="empty">No tickets yet. Create the first one using the form.</div>{% endif %}
+      </section>
+    </section>
+    <p class="footnote">This local learning demo saves tickets in a SQLite file on your computer. It does not contact AWS.</p>
+  </main>
+</body>
+</html>
+
