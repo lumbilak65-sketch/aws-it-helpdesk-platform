@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ticket #{{ ticket.id }} | Help Desk</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='local.css') }}">
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="{{ url_for('dashboard') }}"><span class="brand-mark">HD</span><span>IT HELP DESK<small>LOCAL DEMO</small></span></a><a class="back-link" href="{{ url_for('dashboard') }}">← All tickets</a></header>
+  <main class="page detail-page">
+    {% with messages = get_flashed_messages(with_categories=true) %}{% for category, message in messages %}<div class="notice {{ category }}">{{ message }}</div>{% endfor %}{% endwith %}
+    <section class="panel detail-panel">
+      <p class="eyebrow">TICKET #{{ "%03d"|format(ticket.id) }}</p>
+      <div class="detail-heading"><h1>{{ ticket.title }}</h1><span class="priority {{ ticket.priority|lower }}">{{ ticket.priority }} priority</span></div>
+      <div class="detail-meta"><div><small>REQUESTED BY</small><strong>{{ ticket.requester }}</strong></div><div><small>CREATED</small><strong>{{ ticket.created_at }}</strong></div><div><small>STATUS</small><strong class="status {{ ticket.status|lower|replace(' ', '-') }}">{{ ticket.status }}</strong></div></div>
+      <div class="description"><h2>Issue description</h2><p>{{ ticket.description }}</p></div>
+      <form method="post" class="status-form"><label for="status">Update status</label><select id="status" name="status">{% for status in statuses %}<option {% if status == ticket.status %}selected{% endif %}>{{ status }}</option>{% endfor %}</select><button class="primary" type="submit">Save status</button></form>
+      <p class="footnote">Changes are saved only in this local demo database.</p>
+    </section>
+  </main>
+</body>
+</html>
+
